@@ -1,29 +1,39 @@
+
 name: Build Android APK
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./MediaFloat-main
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
 
-      - name: Make Gradle executable
-        run: chmod +x MediaFloat-main/gradlew
+      - name: Grant execute permission
+        run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: cd MediaFloat-main && ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
-          path: MediaFloat-main/app/build/outputs/apk/debug/
+          name: Android-APK
+          path: MediaFloat-main/app/build/outputs/apk/debug/*.apk
           
